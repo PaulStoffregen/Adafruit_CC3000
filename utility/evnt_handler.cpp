@@ -420,9 +420,9 @@ UINT8 * hci_event_handler(void *pRetParams, UINT8 *from, UINT8 *fromlen)
 						pRetParams = ((CHAR *)pRetParams) + 4;   					
 						STREAM_TO_UINT32((CHAR *)pucReceivedParams,GET_SCAN_RESULTS_SCANRESULT_STATUS_OFFSET,*(UINT32 *)pRetParams);
 						pRetParams = ((CHAR *)pRetParams) + 4;                                                        					
-						STREAM_TO_UINT16((CHAR *)pucReceivedParams,GET_SCAN_RESULTS_ISVALID_TO_SSIDLEN_OFFSET,*(UINT32 *)pRetParams);
+						STREAM_TO_UINT16((CHAR *)pucReceivedParams,GET_SCAN_RESULTS_ISVALID_TO_SSIDLEN_OFFSET,*(UINT16 *)pRetParams);
 						pRetParams = ((CHAR *)pRetParams) + 2;   					
-						STREAM_TO_UINT16((CHAR *)pucReceivedParams,GET_SCAN_RESULTS_FRAME_TIME_OFFSET,*(UINT32 *)pRetParams);
+						STREAM_TO_UINT16((CHAR *)pucReceivedParams,GET_SCAN_RESULTS_FRAME_TIME_OFFSET,*(UINT16 *)pRetParams);
 						pRetParams = ((CHAR *)pRetParams) + 2;  
 						memcpy((UINT8 *)pRetParams, (CHAR *)(pucReceivedParams + GET_SCAN_RESULTS_FRAME_TIME_OFFSET + 2), GET_SCAN_RESULTS_SSID_MAC_LENGTH);	
 						break;
