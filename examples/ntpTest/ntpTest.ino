@@ -149,7 +149,7 @@ void setup(void)
   }
 
   /* Attempt to connect to an access point */
-  char *ssid = WLAN_SSID;             /* Max 32 chars */
+  const char *ssid = WLAN_SSID;             /* Max 32 chars */
   Serial.print(F("\nAttempting to connect to ")); Serial.println(ssid);
   
   /* NOTE: Secure connections are not available in 'Tiny' mode! */

@@ -111,6 +111,9 @@ extern "C" {
 
 #define  IOCTL_SOCKET_EVENTMASK
 
+#ifdef ENOBUFS
+#undef ENOBUFS  // avoid conflict with newlib C library on ARM-based boards
+#endif
 #define ENOBUFS                 55          // No buffer space available
 
 #define __FD_SETSIZE            32

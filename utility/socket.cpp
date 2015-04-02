@@ -1083,7 +1083,8 @@ INT16 simple_link_send(INT32 sd, const void *buf, INT32 len, INT32 flags,
 
 	default:
 		{
-			break;
+			//break;
+			return -1;
 		}
 	}
 
