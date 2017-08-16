@@ -454,7 +454,7 @@ extern INT32 connect(INT32 sd, const sockaddr *addr, INT32 addrlen);
 //!  @sa socket
 //
 //*****************************************************************************
-extern INT16 select(INT32 nfds, fd_set *readsds, fd_set *writesds,
+extern INT16 select_CC3000(INT32 nfds, fd_set *readsds, fd_set *writesds,
                   fd_set *exceptsds, struct timeval *timeout);
 
 //*****************************************************************************

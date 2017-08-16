@@ -1653,7 +1653,7 @@ int Adafruit_CC3000_Client::available(void) {
   timeout.tv_sec = 0;
   timeout.tv_usec = 5000; // 5 millisec
 
-  int16_t s = select(_socket+1, &fd_read, NULL, NULL, &timeout);
+  int16_t s = select_CC3000(_socket+1, &fd_read, NULL, NULL, &timeout);
   //if (CC3KPrinter != 0) } CC3KPrinter->print(F("Select: ")); CC3KPrinter->println(s); }
   if (s == 1) return 1;  // some data is available to read
   else return 0;  // no data is available
