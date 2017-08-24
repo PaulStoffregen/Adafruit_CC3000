@@ -113,10 +113,10 @@ void NTPdiv2(SNTP_Timestamp_t* time)
 // Returns overflow
 uint8_t AddNTPtime(SNTP_Timestamp_t* time1, SNTP_Timestamp_t* time2)
 {
-	uint8_t carry = (((time2->fraction>>1)+(time1->fraction>>1)) & 0x80000000)>>31;
+	uint8_t carry = ((time2->fraction>>1)+(time1->fraction>>1) & 0x80000000)>>31;
 	time2->fraction += time1->fraction;
 	time2->seconds += carry;
-	carry = (((time2->seconds>>1)+(time1->seconds>>1)) & 0x80000000)>>31;
+	carry = ((time2->seconds>>1)+(time1->seconds>>1) & 0x80000000)>>31;
 	time2->seconds += time1->seconds;
 	return carry;       //if there's still a carry, then we have an overflow.
 }
@@ -126,10 +126,10 @@ uint8_t AddNTPtime(SNTP_Timestamp_t* time1, SNTP_Timestamp_t* time2)
 // Returns underflow
 uint8_t DiffNTPtime(SNTP_Timestamp_t* time1, SNTP_Timestamp_t* time2)
 {
-	uint8_t borrow = (((time2->fraction>>1)-(time1->fraction>>1)) & 0x80000000)>>31;
+	uint8_t borrow = ((time2->fraction>>1)-(time1->fraction>>1) & 0x80000000)>>31;
 	time2->fraction -= time1->fraction;
 	time2->seconds -= borrow;
-	borrow = (((time2->seconds>>1)-(time1->seconds>>1)) & 0x80000000)>>31;
+	borrow = ((time2->seconds>>1)-(time1->seconds>>1) & 0x80000000)>>31;
 	time2->seconds -= time1->seconds;
 	return borrow;      //if there's still a borrow, then we have an underflow.
 }
@@ -266,11 +266,11 @@ NetTime_t *sntp::ExtractNTPTime(/*in*/ SNTP_Timestamp_t *ntpTime, /*out*/ NetTim
 	day = (int)dayno;
 	month = 0;
 	while (0 <= day)
-	day-= monthDays[(unsigned char)(month++)];
+	day-= monthDays[month++];
 
 	month -= 1;           //we need to return month as zero-based. Phooey!
 	extractedTime->mon = month;
-	extractedTime->mday = day + monthDays[(unsigned char)month] + 1;        //Since we looped until days went negative, we need add back in days in current month
+	extractedTime->mday = day + monthDays[month] + 1;        //Since we looped until days went negative, we need add back in days in current month
 
 	extractedTime->isdst = 0;                                 //currently ignored.
 	
@@ -357,7 +357,7 @@ sntp::sntp(char* ntp_server_url1, short local_utc_offset, short dst_utc_offset, 
 // and returns it, along with a count of the servers in the list.
 char sntp::GetNTPServerList(const char** ntp_pool_list, uint32_t* addrBuffer, int maxServerCount)
 {
-	uint32_t             ntpServer = 0;
+	uint32_t			 ntpServer= NULL;
 	const char           **ntpPoolName;
 	uint8_t              serverCount = 0;
 
@@ -587,8 +587,7 @@ bool sntp::UpdateNTPTime()
 					int i = 0;
 					while ((!m_timeIsSet) && (i++ < ntp_server_count) && (pServerList))
 					{
-						uint32_t serverAddr = htonl(*(uint32_t*)pServerList);
-						pServerList++;
+						uint32_t serverAddr = htonl(*(uint32_t*)pServerList++);
 						m_timeIsSet = SNTP_GetTime(sntpSocket, &serverAddr);
 					}
 

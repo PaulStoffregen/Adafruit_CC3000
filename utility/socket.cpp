@@ -107,6 +107,7 @@
 extern UINT8 localIP[4];
 #endif
 
+
 //*****************************************************************************
 //
 //! HostFlowControlConsumeBuff
@@ -159,6 +160,35 @@ INT16 HostFlowControlConsumeBuff(INT16 sd)
 			return -3; /* Timeout */
 		}
 #endif
+
+		// Adafruit CC3k Host Driver Difference
+		// Poll CC3k for available bytes with select during buffer wait.
+		// Noted 04-06-2015 by tdicola
+		// This is a bizarre change that majorly helps reliability in the later
+		// Arduino 1.6.x IDE and its newer avr-gcc toolchain.  Without the select
+		// call the CC3k will frequently get stuck in this loop waiting for a buffer
+		// to be free to send data and the CC3k never sending the async event
+		// that buffers are free.  It is unclear why calling select fixes this
+		// issue but my suspicion is it might be making the CC3k realize there
+		// are free buffers and it passing the async event along that will
+		// eventually break out of this loop.  I tried to check if it was just a
+		// timing issue by substituting a small delay for the select call, but 
+		// the problem persists.  Calling select appears to be necessary to keep
+		// the CC3k from hitting some race condition/issue here.
+		if (tSLInformation.usNumberOfFreeBuffers == 0) {
+			// Do a select() call on the socket to see if data is available to read.
+			timeval timeout;
+			fd_set fd_read;
+			memset(&fd_read, 0, sizeof(fd_read));
+			FD_SET(sd, &fd_read);
+			timeout.tv_sec = 0;
+			timeout.tv_usec = 5000;
+			select_CC3000(sd+1, &fd_read, NULL, NULL, &timeout);
+			// Note the results of the select are ignored for now.  Attempts to
+			// have smart behavior like returning an error when there is data
+			// to read and no free buffers for sending just seem to cause more
+			// problems particularly with server code examples.
+		}
 
 	} while(0 == tSLInformation.usNumberOfFreeBuffers);
 
@@ -1083,7 +1113,9 @@ INT16 simple_link_send(INT32 sd, const void *buf, INT32 len, INT32 flags,
 
 	default:
 		{
-			//break;
+			// Adafruit CC3k Host Driver Difference
+			// Break out of function for unknown operation to prevent compiler warnings.
+			// Noted 04-08-2015 by tdicola
 			return -1;
 		}
 	}
